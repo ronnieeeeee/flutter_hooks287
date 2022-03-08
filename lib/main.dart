@@ -36,7 +36,7 @@ class Example extends HookWidget {
   @override
   Widget build(BuildContext context) {
     var ctrl = useTextEditingController();
-    final textIsNotEmpty = useIsNotEmptyTextField(ctrl);
+    useListenable(ctrl);
     return Scaffold(
         body: Column(
       children: [
@@ -44,26 +44,11 @@ class Example extends HookWidget {
           controller: ctrl,
         ),
         ElevatedButton(
-            onPressed: textIsNotEmpty ? () => print("Pressed!") : null,
+            onPressed: ctrl.text.isNotEmpty ? () => print("Pressed!") : null,
             child: Text("Button")),
       ],
     ));
   }
-}
-
-bool useIsNotEmptyTextField(TextEditingController textEditingController) {
-  final hasNotEmpty = useState(textEditingController.text.isNotEmpty);
-
-  useEffect(() {
-    void l() {
-      hasNotEmpty.value = textEditingController.text.isNotEmpty;
-    }
-
-    textEditingController.addListener(l);
-    return () => textEditingController.removeListener(l);
-  }, [textEditingController]);
-
-  return hasNotEmpty.value;
 }
 
 class MyHomePage extends StatefulWidget {
